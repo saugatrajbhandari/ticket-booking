@@ -10,6 +10,7 @@
     "dev": "pnpm run build && pnpm run start"
   },
   "devDependencies": {
+    "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.0"
   },
@@ -18,7 +19,9 @@
   "license": "ISC",
   "dependencies": {
     "@types/authenticator": "^1.1.4",
+    "@types/jsonwebtoken": "^9.0.9",
     "authenticator": "^1.1.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }
