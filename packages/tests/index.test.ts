@@ -7,12 +7,10 @@ const PHONE = "98123453434";
 
 describe("signup endpoint", () => {
   it("check double signup", async () => {
-    const response1 = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-      name: NAME,
+    const response1 = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
       phone: PHONE,
     });
-    const response2 = await axios.post(`${BACKEND_URL}/api/v1/verify`, {
-      name: NAME,
+    const response2 = await axios.post(`${BACKEND_URL}/api/v1/users/verify`, {
       opt: "000000",
     });
 
@@ -21,14 +19,10 @@ describe("signup endpoint", () => {
     expect(response1.data.id).not.toBeNull();
 
     expect(async () => {
-      await axios.post(`${BACKEND_URL}/api/v1/verify`, {
+      await axios.post(`${BACKEND_URL}/api/v1/users/verify`, {
         name: NAME,
         phone: PHONE,
       });
     }).toThrow();
   });
-});
-
-test("adds 1 + 2 to equal 3", () => {
-  expect(33).toBe(3);
 });

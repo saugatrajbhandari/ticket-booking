@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -b",
-    "dev": "pnpm run build && pnpm run start",
-    "start": "set NODE_ENV=production node dist/index.js"
+    "start": "node dist/index.js",
+    "dev": "pnpm run build && pnpm run start"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
@@ -17,6 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/authenticator": "^1.1.4",
+    "authenticator": "^1.1.5",
     "express": "^4.21.2"
   }
 }
