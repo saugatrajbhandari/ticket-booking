@@ -1,33 +1,43 @@
 import { Router } from "express";
 import authenticator from "authenticator";
-import { client } from "@repo/db/client";
 import jwt from "jsonwebtoken";
-import { JWT_PASSWORD } from "../../config";
+import { JWT_PASSWORD } from "../../config.js";
+import { sendMessage } from "../../utils/twilio.js";
+import { prismaClient } from "../../prisma.js";
 
 const router = Router();
 
 router.post("/signup", async (req, res) => {
-  console.log(req.body);
   const phoneNumber = req.body.phoneNumber;
 
-  const result = authenticator.generateToken(phoneNumber + "signup");
-  console.log(result);
+  console.log(typeof phoneNumber);
 
-  const user = await client.user.upsert({
+  const otp = authenticator.generateToken(phoneNumber + "signup");
+
+  const user = await prismaClient.user.upsert({
     where: {
       number: phoneNumber,
     },
     create: {
       number: phoneNumber,
+      name: "saugat",
     },
     update: {},
   });
 
-  if (process.env.NODE_ENV === "production") {
-    // send otp to user
+  // send otp to user
+  console.log("result");
+
+  try {
+    console.log("result");
+    const result = await sendMessage(phoneNumber, `otp:${otp}`);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({ message: "couldnot sent otp", error: { error } });
   }
 
-  res.json({ result });
+  res.json({ id: otp });
 });
 
 router.post("/signup/verify", async (req, res) => {
@@ -37,37 +47,36 @@ router.post("/signup/verify", async (req, res) => {
   const otp = req.body.otp;
 
   const result = authenticator.verifyToken(phoneNumber + "signup", otp);
-
-  if (authenticator.verifyToken(phoneNumber + "signup", otp)) {
-    res.json({
-      message: "Invalid Token",
-    });
-
-    return;
-  }
-
-  const userId = await client.user.update({
-    where: {
-      number: phoneNumber,
-    },
-    data: {
-      name,
-      verified: true,
-    },
-  });
-
-  const token = jwt.sign(
-    {
-      userId,
-    },
-    JWT_PASSWORD
-  );
-
-  res.json({ token });
-
   console.log(result);
 
-  res.json({ result });
+  // if (authenticator.verifyToken(phoneNumber + "signup", otp)) {
+  //   res.json({
+  //     message: "Invalid Token",
+  //   });
+
+  //   return;
+  // }
+
+  // const userId = await client.user.update({
+  //   where: {
+  //     number: phoneNumber,
+  //   },
+  //   data: {
+  //     name,
+  //     verified: true,
+  //   },
+  // });
+
+  // const token = jwt.sign(
+  //   {
+  //     userId,
+  //   },
+  //   JWT_PASSWORD
+  // );
+
+  // console.log(result);
+
+  res.json({ success: result ? true : false });
 });
 
 export default router as Router;

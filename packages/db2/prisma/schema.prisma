@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String    @id @default(uuid())
+  number   String    @unique
+  name     String?
+  verified Boolean   @default(false)
+  booking  Booking[]
+  payment  Payment[]
+}
+
+model Admin {
+  id       String  @id @default(uuid())
+  number   String  @unique
+  name     String
+  verified Boolean @default(false)
+  events   Event[]
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  banner      String
+  Admin       Admin     @relation(fields: [adminId], references: [id])
+  adminId     String
+  booking     Booking[]
+  payment     Payment[]
+}
+
+model Booking {
+  id      String @id @default(uuid())
+  userId  String
+  Event   Event  @relation(fields: [eventId], references: [id])
+  eventId String
+  user    User   @relation(fields: [userId], references: [id])
+  seats   Seat[]
+}
+
+model Seat {
+  id         String   @id @default(uuid())
+  type       String
+  bookingId  String
+  qr         String
+  SeatType   SeatType @relation(fields: [seatTypeId], references: [id])
+  seatTypeId String
+  Booking    Booking  @relation(fields: [bookingId], references: [id])
+}
+
+model SeatType {
+  id          String @id @default(uuid())
+  event       String
+  price       Int
+  name        String
+  description String
+  seat        Seat[]
+}
+
+model Payment {
+  id      String       @id @default(uuid())
+  eventId String
+  userId  String
+  status  PaymentState
+  User    User         @relation(fields: [userId], references: [id])
+  Event   Event        @relation(fields: [eventId], references: [id])
+}
+
+enum PaymentState {
+  Success
+  Fail
+  Pending
+}

@@ -5,23 +5,30 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc -b --watch",
     "build": "tsc -b",
     "start": "node dist/index.js",
-    "dev": "pnpm run build && pnpm run start"
+    "dev": "pnpm run build && node dist/index.js",
+    "dev2": "nodemon src/index.ts"
   },
   "devDependencies": {
     "@repo/db": "workspace:*",
+    "@repo/db2": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "ts-node": "^10.9.2"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "6.4.1",
     "@types/authenticator": "^1.1.4",
     "@types/jsonwebtoken": "^9.0.9",
     "authenticator": "^1.1.5",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.4.1",
+    "twilio": "^5.4.5"
   }
 }
